@@ -1,7 +1,7 @@
 {
   "domain": "hdo",
   "name": "ČEZ HDO",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "documentation": "https://github.com/konikvranik/hacs_hdo",
   "dependencies": [],
   "codeowners": ["konikvranik"],

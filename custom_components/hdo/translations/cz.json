@@ -23,7 +23,7 @@
                 "title": "ČEZ HDO",
                 "description": "Uprav kód povelu HDO",
                 "data": {
-                    "code": "kód povelu",
+                    "code": "kód povelu"
                 }
             }
         }
