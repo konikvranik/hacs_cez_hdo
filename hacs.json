@@ -1,0 +1,9 @@
+{
+  "name": "ČEZ HDO",
+  "domains": ["hdo", "binary_sensor"],
+  "homeassistant": "0.109.0",
+  "zip_release": true,
+  "filename": "hdo.zip",
+  "country": "CZ",
+  "iot_class": "Cloud Polling"
+}

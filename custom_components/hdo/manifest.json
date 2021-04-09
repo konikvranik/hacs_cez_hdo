@@ -1,9 +1,10 @@
 {
   "domain": "hdo",
   "name": "ČEZ HDO",
-  "documentation": "https://www.example.com",
+  "version": "0.0.2",
+  "documentation": "https://github.com/konikvranik/hacs_hdo",
   "dependencies": [],
-  "codeowners": [],
+  "codeowners": ["konikvranik"],
   "requirements": [],
   "config_flow": true
 }
