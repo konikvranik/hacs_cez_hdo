@@ -1,9 +1,16 @@
 {
   "domain": "hdo",
   "name": "ČEZ HDO",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "documentation": "https://github.com/konikvranik/hacs_hdo",
-  "codeowners": ["konikvranik"],
-  "requirements": [],
-  "config_flow": true
+  "requirements": [
+    "integrationhelper",
+    "voluptuous",
+    "requests"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "codeowners": [
+    "@konikvranik"
+  ]
 }
