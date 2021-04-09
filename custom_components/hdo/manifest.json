@@ -1,0 +1,9 @@
+{
+  "domain": "hdo",
+  "name": "ČEZ HDO",
+  "documentation": "https://www.example.com",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": [],
+  "config_flow": true
+}

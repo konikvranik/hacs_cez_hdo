@@ -1,0 +1,11 @@
+hdo:
+  # Description of the service
+  description: HDO.
+  # Different fields that your service accepts
+  fields:
+    # Key of the field
+    code:
+      # Description of the field
+      description: Code
+      # Example value that can be passed for this field
+      example: 'A3B4DP1'

@@ -1,0 +1,32 @@
+{
+    "config": {
+        "title": "ČEZ HDO",
+        "step": {
+            "user": {
+                "title": "ČEZ HDO",
+                "description": "Zadej kód povelu HDO",
+                "data": {
+                    "code": "kód povelu"
+                }
+            }
+        },
+        "error": {
+            "name": "Kód nemůže být prázdný"
+        },
+        "abort": {
+            "single_instance_allowed": "Only a single configuration of HDO is allowed."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "ČEZ HDO",
+                "description": "Uprav kód povelu HDO",
+                "data": {
+                    "code": "kód povelu",
+                }
+            }
+        }
+    }
+
+}
