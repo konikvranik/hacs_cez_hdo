@@ -8,9 +8,11 @@ from string import Formatter
 import homeassistant.helpers.config_validation as cv
 import requests
 import voluptuous as vol
+from homeassistant import config_entries
 from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE,
                                  CONF_FORCE_UPDATE, CONF_CODE)
 from homeassistant.core import callback
+from integrationhelper.const import CC_STARTUP_VERSION
 from voluptuous import ALLOW_EXTRA
 
 CONF_MAX_COUNT = 'maxCount'
@@ -23,6 +25,9 @@ DEFAULT_METHOD = 'GET'
 DEFAULT_NAME = 'HDO REST Sensor'
 DEFAULT_VERIFY_SSL = True
 DOMAIN = 'hdo'
+VERSION = "0.0.4"
+PLATFORM = "binary_sensor"
+ISSUE_URL = "https://github.com/konikvranik/hacs_hdo/issues"
 SERVICE = 'refresh'
 TIMES = 'times'
 
@@ -69,6 +74,39 @@ async def async_setup(hass, config):
     hass.services.async_register(DOMAIN, SERVICE, my_service)
     # Return boolean to indicate that initialization was successfully.
     return True
+
+
+async def async_setup_entry(hass, config_entry):
+    """Set up this integration using UI."""
+    if config_entry.source == config_entries.SOURCE_IMPORT:
+        # We get here if the integration is set up using YAML
+        hass.async_create_task(hass.config_entries.async_remove(config_entry.entry_id))
+        return False
+    # Print startup message
+    _LOGGER.info(CC_STARTUP_VERSION.format(name=DOMAIN, version=VERSION, issue_link=ISSUE_URL))
+    config_entry.options = config_entry.data
+    config_entry.add_update_listener(update_listener)
+    # Add sensor
+    hass.async_add_job(
+        hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
+    )
+    return True
+
+
+async def async_remove_entry(hass, config_entry):
+    """Handle removal of an entry."""
+    try:
+        await hass.config_entries.async_forward_entry_unload(config_entry, PLATFORM)
+        _LOGGER.info("Successfully removed sensor from the HDO integration")
+    except ValueError:
+        pass
+
+
+async def update_listener(hass, entry):
+    """Update listener."""
+    entry.data = entry.options
+    await hass.config_entries.async_forward_entry_unload(entry, PLATFORM)
+    hass.async_add_job(hass.config_entries.async_forward_entry_setup(entry, PLATFORM))
 
 
 class HDORestData(object):
