@@ -6,7 +6,8 @@ from homeassistant import config_entries
 from homeassistant.const import CONF_CODE
 from homeassistant.core import callback
 
-from . import DOMAIN, SCHEMA
+from . import DOMAIN
+from .binary_sensor import PLATFORM_SCHEMA
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -43,7 +44,7 @@ class HDOFlowHandler(config_entries.ConfigFlow):
         if user_input is not None:
             if CONF_CODE in user_input:
                 code = user_input[CONF_CODE]
-        data_schema = SCHEMA
+        data_schema = PLATFORM_SCHEMA
         data_schema[vol.Required(CONF_CODE, default=code)] = str
         return self.async_show_form(step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors)
 
@@ -88,7 +89,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     async def _show_init_form(self, user_input):
         """Configure the form."""
-        data_schema = SCHEMA
+        data_schema = PLATFORM_SCHEMA
         data_schema[vol.Required(CONF_CODE, default=self.config_entry.options.get(CONF_CODE))] = str
         return self.async_show_form(
             step_id="init", data_schema=vol.Schema(data_schema), errors=self._errors
