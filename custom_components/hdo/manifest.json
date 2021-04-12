@@ -12,5 +12,7 @@
   "dependencies": [],
   "codeowners": [
     "@konikvranik"
-  ]
+  ],
+  "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/%C4%8Cez_logo.PNG",
+  "logo": "https://mu.kutnahora.cz/uploads/download/cezdistribuce_logonew.jpg"
 }
