@@ -1,8 +1,7 @@
 {
-  "name": "ČEZ HDO & outages",
+  "name": "ČEZ HDO",
   "domains": [
     "cez_hdo",
-    "cez_outages",
     "binary_sensor"
   ],
   "homeassistant": "0.109.0",
