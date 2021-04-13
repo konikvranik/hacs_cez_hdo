@@ -36,12 +36,11 @@ SCHEMA = {
     vol.Optional(CONF_NAME, default=DEFAULT_NAME): cv.string,
     vol.Optional(CONF_VALUE_TEMPLATE): cv.template,
     vol.Optional(CONF_FORCE_UPDATE, default=True): cv.boolean,
-    vol.Optional(CONF_REFRESH_RATE, default='24:00:00'): vol.All(cv.time_period, cv.positive_timedelta),
+    vol.Optional(CONF_REFRESH_RATE, default=86400): vol.All(vol.Coerce(int)),
     vol.Optional(CONF_MAX_COUNT, default=5): vol.All(vol.Coerce(int)),
 }
 
-CONFIG_SCHEMA = vol.Schema({
-    vol.Required(DOMAIN): vol.Schema(SCHEMA)}, extra=ALLOW_EXTRA)
+CONFIG_SCHEMA = vol.Schema(SCHEMA, extra=ALLOW_EXTRA)
 
 restdata = dict()
 
@@ -49,7 +48,10 @@ restdata = dict()
 async def async_setup(hass, config):
     """Setup the service example component."""
     _LOGGER.debug(config)
-    config = config.get(DOMAIN)
+    if config.get(DOMAIN) is None:
+        config = CONFIG_SCHEMA({DOMAIN: {}}).get(DOMAIN)
+    else:
+        config = CONFIG_SCHEMA(config).get(DOMAIN)
     _LOGGER.debug(config)
 
     def update(code):
