@@ -4,8 +4,7 @@ import requests
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_RESOURCE, CONF_HEADERS, CONF_METHOD, CONF_NAME, CONF_PAYLOAD, \
-    CONF_VERIFY_SSL, CONF_FORCE_UPDATE
+from homeassistant.const import CONF_NAME, CONF_VERIFY_SSL, CONF_FORCE_UPDATE
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.typing import HomeAssistantType
 from integrationhelper.const import CC_STARTUP_VERSION
@@ -19,7 +18,7 @@ CONF_MAX_COUNT = 'maxCount'
 
 DOMAIN = "cez_outages"
 VERSION = "0.0.1"
-PLATFORM = "sensor"
+PLATFORM = "binary_sensor"
 DEFAULT_METHOD = 'GET'
 DEFAULT_NAME = 'JSON REST Sensor'
 DEFAULT_VERIFY_SSL = True

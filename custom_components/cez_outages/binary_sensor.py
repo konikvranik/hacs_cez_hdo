@@ -4,17 +4,16 @@ For more details about this platform, please refer to the documentation at
 https://home-assistant.io/components/sensor.rest/
 Modified to parse a JSON reply and store data as attributes
 """
-import datetime
 import json
 import logging
 import re
 
 import requests
+from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.const import (
     CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
-    CONF_VERIFY_SSL, CONF_PAYLOAD, CONF_HEADERS, STATE_OFF)
+    CONF_VERIFY_SSL, CONF_PAYLOAD, CONF_HEADERS, STATE_OFF, STATE_ON)
 from homeassistant.helpers import config_validation as cv
-from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
 from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA
@@ -28,25 +27,16 @@ async def async_setup_entry(hass, config, async_add_entities):
     """Set up ESPHome binary sensors based on a config entry."""
     config = config.data
     name = config.get(CONF_NAME)
-    resource = config.get(CONF_RESOURCE,
-                          "https://dip.cezdistribuce.cz/irj/portal/anonymous/rest-api?path=/vyhledaniOdstavek/nactiOdstavky")
-    method = config.get(CONF_METHOD, "POST")
+    url = config.get(CONF_RESOURCE, "https://api.bezstavy.cz/cezd/api/inspectaddress/%s")
+    method = config.get(CONF_METHOD, "GET")
     payload = config.get(CONF_PAYLOAD, '{"ulice":"","mesto":"Statenice","psc":""}')
     verify_ssl = config.get(CONF_VERIFY_SSL, True)
-    headers = config.get(CONF_HEADERS, {"X-App-ID": "1582533535480",
-                                        "Origin": "https://dip.cezdistribuce.cz",
-                                        "X-Request-Token": "3491d2690c38fc98ce999a6c39d31017a6ffb1ab",
-                                        "Content-Type": "application/json;charset=UTF-8",
-                                        "Referer": "https://dip.cezdistribuce.cz/irj/portal/anonymous/vyhledani-odstavek",
-                                        "Accept-Encoding": "gzip, deflate, br",
-                                        "Accept-Language": "cs,en-US;q=0.9,en-GB;q=0.8,en;q=0.7,cs-CZ;q=0.6"})
     auth = None
-    rest = JSONRestClient(method, resource, auth, headers, payload, verify_ssl)
-    await hass.async_add_executor_job(rest.update)
-
-    if rest.data is None:
-        _LOGGER.error("Unable to fetch REST data")
-        return False
+    rest = []
+    for r in config[CONF_STREET]:
+        client = JSONRestClient(method, url % r, auth, None, payload, verify_ssl)
+        rest.append(client)
+        await hass.async_add_executor_job(client.update)
 
     async_add_entities([JSONRestSensor(hass, rest, name, config.get(CONF_STREET), config.get(CONF_STREET_NO),
                                        config.get(CONF_PARCEL_NO), config.get(CONF_REFRESH_RATE))])
@@ -60,30 +50,6 @@ def anymatch(value, patterns):
             _LOGGER.debug("Matched %s", r)
             return r.group(0)
     return False
-
-
-def filterout(x, streets, street_numbers, parcel_numbers):
-    for part in x['parts']:
-        for street in part['streets']:
-            s = anymatch(street['streetName'], streets)
-            if s:
-                for number in street['streetNumbers']:
-                    r = anymatch(number['buildingId'], street_numbers)
-                    if r:
-                        _LOGGER.debug("matched on c:%s, s:%s, b:%s", part['cityPart'], s, r)
-                        return dict(times(x), part=part['cityPart'], street=s, building=r)
-                    r = anymatch(number['parcelaId'], parcel_numbers)
-                    if r:
-                        _LOGGER.debug("matched on c:%s, s:%s, p:%s", part['cityPart'], s, r)
-                        return dict(times(x), part=part['cityPart'], street=s, parcel=r)
-    return False
-
-
-def times(x):
-    date = datetime.datetime.fromisoformat(x['date']).date()
-    from_time = datetime.datetime.fromisoformat(x['fromTime']).time()
-    to_time = datetime.datetime.fromisoformat(x['toTime']).time()
-    return {"from": datetime.datetime.combine(date, from_time), "to": datetime.datetime.combine(date, to_time)}
 
 
 class JSONRestSensor(Entity):
@@ -112,23 +78,20 @@ class JSONRestSensor(Entity):
 
     def update(self):
         """Get the latest data from REST API and update the state."""
-        self.rest.update()
-        self._hass.async_add_executor_job(self.rest.update)
-        value = self.rest.data
-        _LOGGER.debug("Raw REST data: %s" % value)
+        outages = []
+        outages_in_town = []
+        for r in self.rest:
+            self._hass.async_add_executor_job(r.update)
+            value = r.data
+            outages += value["outages"]
+            outages_in_town += value["outages_in_town"]
+            _LOGGER.debug("Raw REST data: %s" % value)
 
-        if value is None:
-            _LOGGER.debug("value is None -> state UNKNOWN")
-            value = STATE_UNKNOWN
-        else:
-            data = json.loads(value)['data']
-            t = [y for y in [filterout(x, self._streets, self._street_numbers, self._parcel_numbers) for x in data] if
-                 y]
-            value = t[0]['from'] if len(t) > 0 else STATE_OFF
-            self._attributes['times'] = t
-            self._attributes['data'] = data
+        self._attributes['outages'] = outages
+        self._attributes['outages_in_town'] = outages_in_town
+        self._attributes['times'] = list(map(lambda x: x["opened_at"], outages))
 
-        self._state = value
+        self._state = STATE_ON if outages else STATE_OFF
 
     @property
     def state_attributes(self):
@@ -156,7 +119,7 @@ class JSONRestClient(object):
                 response = sess.send(
                     self._request, timeout=10, verify=self._verify_ssl)
 
-            self.data = response.text
+            self.data = json.loads(response.text)
         except requests.exceptions.RequestException:
             _LOGGER.error("Error fetching data: %s", self._request)
             self.data = None
