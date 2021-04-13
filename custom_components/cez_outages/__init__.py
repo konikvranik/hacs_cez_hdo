@@ -17,7 +17,7 @@ CONF_REFRESH_RATE = 'refreshRate'
 CONF_MAX_COUNT = 'maxCount'
 
 DOMAIN = "cez_outages"
-VERSION = "0.0.1"
+VERSION = "0.1.0"
 PLATFORM = "binary_sensor"
 DEFAULT_METHOD = 'GET'
 DEFAULT_NAME = 'JSON REST Sensor'

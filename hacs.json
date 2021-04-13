@@ -1,12 +1,12 @@
 {
-  "name": "ČEZ HDO",
+  "name": "ČEZ HDO & outages",
   "domains": [
     "hdo",
     "binary_sensor"
   ],
   "homeassistant": "0.109.0",
   "zip_release": true,
-  "filename": "hdo.zip",
+  "filename": "cez_hdo.zip",
   "country": "CZ",
   "iot_class": "Cloud Polling",
   "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/%C4%8Cez_logo.PNG",

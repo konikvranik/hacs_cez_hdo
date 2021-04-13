@@ -1,7 +1,7 @@
 {
   "domain": "cez_hdo",
   "name": "ČEZ HDO",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "documentation": "https://github.com/konikvranik/hacs_cez",
   "requirements": [
     "integrationhelper",
