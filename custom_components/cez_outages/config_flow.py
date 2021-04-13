@@ -1,14 +1,16 @@
 """Adds config flow for HDO."""
+import json
 import logging
 from collections import OrderedDict
 
+import requests
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_CODE, CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, CONF_VERIFY_SSL
+from homeassistant.const import CONF_NAME, CONF_FORCE_UPDATE, CONF_ADDRESS
 from homeassistant.core import callback
+from homeassistant.helpers import config_validation
 
-from . import DOMAIN, DEFAULT_NAME, CONF_REFRESH_RATE, CONF_MAX_COUNT, DEFAULT_VERIFY_SSL, CONF_STREET, CONF_STREET_NO, \
-    CONF_PARCEL_NO
+from . import DOMAIN, DEFAULT_NAME, CONF_REFRESH_RATE, CONF_MAX_COUNT, CONF_STREET, _call_request
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -28,38 +30,54 @@ class HDOFlowHandler(config_entries.ConfigFlow):
     async def async_step_user(self, user_input={}):  # pylint: disable=dangerous-default-value
         """Display the form, then store values and create entry."""
         self._errors = {}
-        if user_input is not None:
-            if user_input[CONF_CODE] != "":
-                # Remember Frequency
-                await self.async_set_unique_id(user_input[CONF_CODE])
-                self._data.update(user_input)
-                if CONF_REFRESH_RATE in user_input:
-                    self._data[CONF_REFRESH_RATE] = user_input[CONF_REFRESH_RATE]
-                # Call next step
-                return self.async_create_entry(title=self._data[CONF_CODE], data=self._data)
-            else:
-                self._errors["base"] = "code"
-            return await self._show_user_form(user_input)
-        return await self._show_user_form(user_input)
+        if user_input is None:
+            return await self._show_address_form(user_input)
 
-    async def _show_user_form(self, user_input):
+        return await self.async_step_config(await self._load_addresses(user_input.get(CONF_ADDRESS)))
+
+    async def async_step_config(self, user_input={}):  # pylint: disable=dangerous-default-value
+        if user_input.get(CONF_NAME) is None:
+            return await self._show_config_form(user_input)
+
+        self._data.update(user_input)
+
+        return self.async_create_entry(title=self._data[CONF_NAME], data=self._data)
+
+    async def _load_addresses(self, addr):
+        request = requests.Request(
+            "GET", "https://api.bezstavy.cz/address/addressesAndTowns?q=%s" % addr).prepare()
+        try:
+            response = await self.hass.async_add_executor_job(_call_request, request)
+            return json.loads(response.text)
+        except requests.exceptions.RequestException:
+            _LOGGER.error("Error fetching data: %s", self._request)
+            self.data = None
+
+
+
+    async def _show_address_form(self, user_input):
         """Configure the form."""
         # Defaults
-        code = ""
-        if user_input is not None:
-            if CONF_CODE in user_input:
-                code = user_input[CONF_CODE]
+        data_schema = OrderedDict()
+        data_schema[vol.Required(CONF_ADDRESS)] = str
+        form = self.async_show_form(step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors)
+        return form
+
+    async def _show_config_form(self, user_input):
+        """Configure the form."""
+        all_repos = dict()
+        for a in user_input.get("addresses"):
+            all_repos[str(a["id"])] = "%s %s, %s" % (a["street"], a["houseNum"], a["town"])
+        # Defaults
         data_schema = OrderedDict()
         data_schema[vol.Optional(CONF_NAME, default=DEFAULT_NAME)] = str
-        data_schema[vol.Optional(CONF_STREET)] = str
-        data_schema[vol.Optional(CONF_STREET_NO)] = str
-        data_schema[vol.Optional(CONF_PARCEL_NO)] = str
-        data_schema[vol.Required(CONF_VERIFY_SSL, default=DEFAULT_VERIFY_SSL)] = bool
+        data_schema[vol.Optional(CONF_STREET, default=list(all_repos.keys()))] = config_validation.multi_select(
+            all_repos)
         data_schema[vol.Optional(CONF_FORCE_UPDATE, default=True)] = bool
         data_schema[
             vol.Optional(CONF_REFRESH_RATE, default=86400)] = int
         data_schema[vol.Optional(CONF_MAX_COUNT, default=5)] = int
-        form = self.async_show_form(step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors)
+        form = self.async_show_form(step_id="config", data_schema=vol.Schema(data_schema), errors=self._errors)
         return form
 
     async def async_step_import(self, user_input):  # pylint: disable=unused-argument
@@ -98,10 +116,9 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         if user_input is not None:
             # Update entry
             self._data.update(user_input)
-            self._data[CONF_CODE] = self.config_entry.unique_id
             if CONF_REFRESH_RATE in user_input:
                 self._data[CONF_REFRESH_RATE] = user_input[CONF_REFRESH_RATE]
-            return self.async_create_entry(title=self._data[CONF_CODE], data=self._data)
+            return self.async_create_entry(title=self._data[CONF_NAME], data=self._data)
         else:
             return await self._show_init_form(user_input)
 
@@ -112,10 +129,6 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         data_schema = OrderedDict()
         data_schema[
             vol.Optional(CONF_NAME, default=user_input[CONF_NAME] if CONF_NAME in user_input else DEFAULT_NAME)] = str
-        data_schema[vol.Optional(CONF_STREET)] = str
-        data_schema[vol.Optional(CONF_STREET_NO)] = str
-        data_schema[vol.Optional(CONF_PARCEL_NO)] = str
-        data_schema[vol.Required(CONF_VERIFY_SSL, default=DEFAULT_VERIFY_SSL)] = bool
         data_schema[vol.Optional(CONF_FORCE_UPDATE, default=user_input[
             CONF_FORCE_UPDATE] if CONF_FORCE_UPDATE in user_input else True)] = bool
         data_schema[vol.Optional(CONF_REFRESH_RATE, default=user_input[

@@ -10,6 +10,7 @@
           "street": "Ulice",
           "streetNo": "Číslo domu",
           "parcelNo": "Číslo parcely",
+          "verify_ssl": "Kontrolovat platnost SSL certifikátů",
           "force_update": "Vynutit aktualizaci",
           "refreshRate": "Frekvence aktualizací",
           "maxCount": "Maximální počet"
@@ -34,6 +35,7 @@
           "streetNo": "Číslo domu",
           "parcelNo": "Číslo parcely",
           "force_update": "Vynutit aktualizaci",
+          "verify_ssl": "Kontrolovat platnost SSL certifikátů",
           "refreshRate": "Frekvence aktualizací",
           "maxCount": "Maximální počet"
         }

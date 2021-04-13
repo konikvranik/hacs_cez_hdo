@@ -26,7 +26,7 @@ _LOGGER.info('Starting hdo')
 DEFAULT_METHOD = 'GET'
 DEFAULT_NAME = 'HDO REST Sensor'
 DEFAULT_VERIFY_SSL = True
-DOMAIN = 'hdo'
+DOMAIN = 'cez_hdo'
 VERSION = "0.0.5"
 PLATFORM = "binary_sensor"
 ISSUE_URL = "https://github.com/konikvranik/hacs_cez/issues"

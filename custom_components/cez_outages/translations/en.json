@@ -10,6 +10,7 @@
           "street": "Street",
           "streetNo": "House number",
           "parcelNo": "Plot number",
+          "verify_ssl": "Validate SSL certificates",
           "force_update": "Force update",
           "refreshRate": "Refresh rate",
           "maxCount": "Max count"
@@ -33,6 +34,7 @@
           "street": "Street",
           "streetNo": "House number",
           "parcelNo": "Plot number",
+          "verify_ssl": "Validate SSL certificates",
           "force_update": "Force update",
           "refreshRate": "Refresh rate",
           "maxCount": "Max count"

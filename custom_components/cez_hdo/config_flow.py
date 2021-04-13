@@ -38,7 +38,6 @@ class HDOFlowHandler(config_entries.ConfigFlow):
                 return self.async_create_entry(title=self._data[CONF_CODE], data=self._data)
             else:
                 self._errors["base"] = "code"
-            return await self._show_user_form(user_input)
         return await self._show_user_form(user_input)
 
     async def _show_user_form(self, user_input):

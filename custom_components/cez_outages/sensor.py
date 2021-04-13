@@ -14,7 +14,7 @@ from homeassistant.const import (
     CONF_NAME, STATE_UNKNOWN, CONF_RESOURCE, CONF_METHOD,
     CONF_VERIFY_SSL, CONF_PAYLOAD, CONF_HEADERS, STATE_OFF)
 from homeassistant.helpers import config_validation as cv
-from homeassistant.helpers.config_validation import PLATFORM_SCHEMA
+from homeassistant.components.sensor import PLATFORM_SCHEMA
 from homeassistant.helpers.entity import Entity
 
 from . import CONF_STREET, CONF_STREET_NO, CONF_PARCEL_NO, CONF_REFRESH_RATE, SCHEMA
@@ -42,7 +42,7 @@ async def async_setup_entry(hass, config, async_add_entities):
                                         "Accept-Language": "cs,en-US;q=0.9,en-GB;q=0.8,en;q=0.7,cs-CZ;q=0.6"})
     auth = None
     rest = JSONRestClient(method, resource, auth, headers, payload, verify_ssl)
-    rest.update()
+    await hass.async_add_executor_job(rest.update)
 
     if rest.data is None:
         _LOGGER.error("Unable to fetch REST data")
@@ -99,7 +99,6 @@ class JSONRestSensor(Entity):
         self._attributes = {}
         self._state = STATE_UNKNOWN
         self._parcel_numbers = parcel_numbers
-        self.update()
 
     @property
     def name(self):
@@ -114,6 +113,7 @@ class JSONRestSensor(Entity):
     def update(self):
         """Get the latest data from REST API and update the state."""
         self.rest.update()
+        self._hass.async_add_executor_job(self.rest.update)
         value = self.rest.data
         _LOGGER.debug("Raw REST data: %s" % value)
 
