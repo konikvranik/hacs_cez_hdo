@@ -2,7 +2,6 @@
 import logging
 from collections import OrderedDict
 
-import homeassistant.helpers.config_validation as cv
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_CODE, CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE
@@ -34,7 +33,7 @@ class HDOFlowHandler(config_entries.ConfigFlow):
                 await self.async_set_unique_id(user_input[CONF_CODE])
                 self._data.update(user_input)
                 if CONF_REFRESH_RATE in user_input:
-                    self._data[CONF_REFRESH_RATE] = user_input[CONF_REFRESH_RATE].total_seconds()
+                    self._data[CONF_REFRESH_RATE] = user_input[CONF_REFRESH_RATE]
                 # Call next step
                 return self.async_create_entry(title=self._data[CONF_CODE], data=self._data)
             else:
@@ -51,11 +50,11 @@ class HDOFlowHandler(config_entries.ConfigFlow):
                 code = user_input[CONF_CODE]
         data_schema = OrderedDict()
         data_schema[vol.Required(CONF_CODE, default=code)] = str
-        data_schema[vol.Optional(CONF_VALUE_TEMPLATE)] = str
         data_schema[vol.Optional(CONF_NAME, default=DEFAULT_NAME)] = str
+        data_schema[vol.Optional(CONF_VALUE_TEMPLATE)] = str
         data_schema[vol.Optional(CONF_FORCE_UPDATE, default=True)] = bool
         data_schema[
-            vol.Optional(CONF_REFRESH_RATE, default=86400)] = cv.positive_time_period_dict
+            vol.Optional(CONF_REFRESH_RATE, default=86400)] = int
         data_schema[vol.Optional(CONF_MAX_COUNT, default=5)] = int
         form = self.async_show_form(step_id="user", data_schema=vol.Schema(data_schema), errors=self._errors)
         return form
@@ -98,7 +97,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             self._data.update(user_input)
             self._data[CONF_CODE] = self.config_entry.unique_id
             if CONF_REFRESH_RATE in user_input:
-                self._data[CONF_REFRESH_RATE] = user_input[CONF_REFRESH_RATE].total_seconds()
+                self._data[CONF_REFRESH_RATE] = user_input[CONF_REFRESH_RATE]
             return self.async_create_entry(title=self._data[CONF_CODE], data=self._data)
         else:
             return await self._show_init_form(user_input)
@@ -115,7 +114,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
         data_schema[vol.Optional(CONF_FORCE_UPDATE, default=user_input[
             CONF_FORCE_UPDATE] if CONF_FORCE_UPDATE in user_input else True)] = bool
         data_schema[vol.Optional(CONF_REFRESH_RATE, default=user_input[
-            CONF_REFRESH_RATE] if CONF_REFRESH_RATE in user_input else 86400)] = cv.positive_time_period_dict
+            CONF_REFRESH_RATE] if CONF_REFRESH_RATE in user_input else 86400)] = int
         data_schema[vol.Optional(CONF_MAX_COUNT,
                                  default=user_input[CONF_MAX_COUNT] if CONF_MAX_COUNT in user_input else 5)] = int
         return self.async_show_form(step_id="init", data_schema=vol.Schema(data_schema), errors=self._errors)
