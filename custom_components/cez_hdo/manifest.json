@@ -3,11 +3,7 @@
   "name": "ČEZ HDO",
   "version": "0.1.0",
   "documentation": "https://github.com/konikvranik/hacs_cez",
-  "requirements": [
-    "integrationhelper",
-    "voluptuous",
-    "requests"
-  ],
+  "requirements": [],
   "config_flow": true,
   "dependencies": [],
   "codeowners": [
