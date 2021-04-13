@@ -1,8 +1,8 @@
 {
-  "domain": "cez_hdo",
-  "name": "ČEZ HDO",
-  "version": "0.0.5",
-  "documentation": "https://github.com/konikvranik/hacs_hdo",
+  "domain": "cez_outages",
+  "name": "ČEZ outages",
+  "version": "0.0.1",
+  "documentation": "https://github.com/konikvranik/hacs_cez",
   "requirements": [
     "integrationhelper",
     "voluptuous",

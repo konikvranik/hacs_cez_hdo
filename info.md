@@ -9,5 +9,4 @@ Home assistant ČEZ HDO integration
 
  {% for h in states.binary_sensor.nizky_tarif.attributes.following%}{{h.start.strftime('%H:%M')}}▼ {{h.end.strftime('%H:%M')}}▲ {% endfor %}
 
-
 ```

@@ -1,0 +1,43 @@
+{
+  "config": {
+    "title": "ČEZ - plánované výpadky",
+    "step": {
+      "user": {
+        "title": "ČEZ - plánované výpadky",
+        "description": "Zadej kód povelu HDO",
+        "data": {
+          "name": "Jméno",
+          "street": "Ulice",
+          "streetNo": "Číslo domu",
+          "parcelNo": "Číslo parcely",
+          "force_update": "Vynutit aktualizaci",
+          "refreshRate": "Frekvence aktualizací",
+          "maxCount": "Maximální počet"
+        }
+      }
+    },
+    "error": {
+      "name": "Kód nemůže být prázdný"
+    },
+    "abort": {
+      "single_instance_allowed": "Only a single configuration of HDO is allowed."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "ČEZ - plánované výpadky",
+        "description": "Uprav kód povelu HDO",
+        "data": {
+          "name": "Jméno",
+          "street": "Ulice",
+          "streetNo": "Číslo domu",
+          "parcelNo": "Číslo parcely",
+          "force_update": "Vynutit aktualizaci",
+          "refreshRate": "Frekvence aktualizací",
+          "maxCount": "Maximální počet"
+        }
+      }
+    }
+  }
+}

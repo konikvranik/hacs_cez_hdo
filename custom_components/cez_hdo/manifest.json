@@ -1,0 +1,18 @@
+{
+  "domain": "cez_hdo",
+  "name": "ČEZ HDO",
+  "version": "0.0.5",
+  "documentation": "https://github.com/konikvranik/hacs_cez",
+  "requirements": [
+    "integrationhelper",
+    "voluptuous",
+    "requests"
+  ],
+  "config_flow": true,
+  "dependencies": [],
+  "codeowners": [
+    "@konikvranik"
+  ],
+  "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/%C4%8Cez_logo.PNG",
+  "logo": "https://mu.kutnahora.cz/uploads/download/cezdistribuce_logonew.jpg"
+}
