@@ -10,25 +10,24 @@ import datetime
 import json
 
 from homeassistant.components.binary_sensor import PLATFORM_SCHEMA
-from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, STATE_UNKNOWN, STATE_ON, STATE_OFF,
-                                 EVENT_HOMEASSISTANT_START)
+from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, STATE_UNKNOWN, STATE_ON, STATE_OFF)
 from homeassistant.helpers.entity import Entity
 
-from . import DOMAIN, SERVICE, CONF_CODE, CONF_MAX_COUNT, CONF_REFRESH_RATE, TIMES, SCHEMA, _LOGGER, strfdelta
+from . import DOMAIN, SERVICE, CONF_CODE, CONF_MAX_COUNT, CONF_REFRESH_RATE, TIMES, SCHEMA, _LOGGER, strfdelta, VERSION
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
 
 
-def setup_platform(hass, config, add_devices, discovery_info=None):
-    """Set up the RESTful sensor."""
-    _LOGGER.debug('binary sensor')
+async def async_setup_entry(hass, config, async_add_entities):
+    """Set up ESPHome binary sensors based on a config entry."""
+    config = config.data
     value_template = config.get(CONF_VALUE_TEMPLATE)
     if value_template is not None:
         value_template.hass = hass
     sensor = HDORestSensor(hass, config.get(CONF_NAME), config.get(CONF_CODE), value_template,
-                           config.get(CONF_REFRESH_RATE), config.get(CONF_FORCE_UPDATE), config.get(CONF_MAX_COUNT))
-    add_devices([sensor])
-    hass.bus.listen_once(EVENT_HOMEASSISTANT_START, lambda _: sensor.update)
+                           datetime.timedelta(seconds=config.get(CONF_REFRESH_RATE)), config.get(CONF_FORCE_UPDATE),
+                           config.get(CONF_MAX_COUNT))
+    async_add_entities([sensor], True)
 
 
 class HDORestSensor(Entity):
@@ -46,7 +45,24 @@ class HDORestSensor(Entity):
         self._force_update = force_update
         self._maxCount = maxCount
         self._refresh_rate = refresh_rate
-        self._last_refresh = datetime.datetime.now() - refresh_rate
+        self._last_refresh = datetime.datetime.now() - 2 * self._refresh_rate
+
+    @property
+    def unique_id(self):
+        """Return Unique ID string."""
+        return self._code
+
+    @property
+    def device_info(self):
+        """Information about this entity/device."""
+        return {
+            "identifiers": {(DOMAIN, self._code)},
+            # If desired, the name for the device could be different to the entity
+            "name": self.name,
+            "sw_version": VERSION,
+            "model": "REST call",
+            "manufacturer": "ČEZ distribuce",
+        }
 
     @property
     def name(self):

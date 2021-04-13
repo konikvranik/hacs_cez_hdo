@@ -9,9 +9,11 @@ import homeassistant.helpers.config_validation as cv
 import requests
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE,
                                  CONF_FORCE_UPDATE, CONF_CODE)
 from homeassistant.core import callback
+from homeassistant.helpers.typing import HomeAssistantType
 from integrationhelper.const import CC_STARTUP_VERSION
 from voluptuous import ALLOW_EXTRA
 
@@ -30,6 +32,7 @@ PLATFORM = "binary_sensor"
 ISSUE_URL = "https://github.com/konikvranik/hacs_hdo/issues"
 SERVICE = 'refresh'
 TIMES = 'times'
+STORAGE_VERSION = 1
 
 SCHEMA = {
     vol.Required(CONF_CODE): cv.string,
@@ -40,18 +43,15 @@ SCHEMA = {
     vol.Optional(CONF_MAX_COUNT, default=5): vol.All(vol.Coerce(int)),
 }
 
-CONFIG_SCHEMA = vol.Schema(SCHEMA, extra=ALLOW_EXTRA)
+CONFIG_SCHEMA = vol.Schema({vol.Optional(DOMAIN): vol.Schema(SCHEMA)}, extra=ALLOW_EXTRA)
 
 restdata = dict()
 
 
-async def async_setup(hass, config):
-    """Setup the service example component."""
-    _LOGGER.debug(config)
-    if config.get(DOMAIN) is None:
-        config = CONFIG_SCHEMA({DOMAIN: {}}).get(DOMAIN)
-    else:
-        config = CONFIG_SCHEMA(config).get(DOMAIN)
+async def async_setup_entry(hass, entry):
+    """Set up ESPHome binary sensors based on a config entry."""
+    _LOGGER.debug(entry)
+    config = CONFIG_SCHEMA({DOMAIN: dict(entry.data)})
     _LOGGER.debug(config)
 
     def update(code):
@@ -59,7 +59,7 @@ async def async_setup(hass, config):
         hass.states.set(DOMAIN + '.' + code, 'OK', attributes=restdata[code].data)
 
     @callback
-    def my_service(call):
+    def hdo_updater(call):
         """My first service."""
         _LOGGER.debug("Called HDO: %s", call)
         if CONF_CODE in call.data:
@@ -73,12 +73,22 @@ async def async_setup(hass, config):
         hass.async_add_executor_job(update, code)
 
     # Register our service with Home Assistant.
-    hass.services.async_register(DOMAIN, SERVICE, my_service)
+    hass.services.async_register(DOMAIN, SERVICE, hdo_updater)
+    hass.async_create_task(hass.config_entries.async_forward_entry_setup(entry, PLATFORM))
     # Return boolean to indicate that initialization was successfully.
     return True
 
 
-async def async_setup_entry(hass, config_entry):
+async def platform_async_setup_entry(
+        hass: HomeAssistantType,
+        config_entry: ConfigEntry,
+        async_add_entities,
+        *,
+        component_key: str,
+        info_type,
+        entity_type,
+        state_type,
+) -> bool:
     """Set up this integration using UI."""
     if config_entry.source == config_entries.SOURCE_IMPORT:
         # We get here if the integration is set up using YAML
@@ -89,10 +99,7 @@ async def async_setup_entry(hass, config_entry):
     config_entry.options = config_entry.data
     config_entry.add_update_listener(update_listener)
     # Add sensor
-    hass.async_add_job(
-        hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
-    )
-    return True
+    return await hass.config_entries.async_forward_entry_setup(config_entry, PLATFORM)
 
 
 async def async_remove_entry(hass, config_entry):
