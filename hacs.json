@@ -6,7 +6,7 @@
   ],
   "homeassistant": "0.109.0",
   "zip_release": true,
-  "filename": "cez_hdo.zip",
+  "filename": "hacs_cez.zip",
   "country": "CZ",
   "iot_class": "Cloud Polling",
   "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/%C4%8Cez_logo.PNG",
