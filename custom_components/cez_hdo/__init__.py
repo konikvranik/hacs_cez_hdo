@@ -3,6 +3,7 @@
 import datetime
 import json
 import logging
+import os
 from string import Formatter
 
 import homeassistant.helpers.config_validation as cv
@@ -24,7 +25,7 @@ _LOGGER.info('Starting hdo')
 
 DEFAULT_METHOD = 'GET'
 DEFAULT_VERIFY_SSL = True
-MANIFEST = json.load(open("mainfest.json"))
+MANIFEST = json.load(open("%s/mainfest.json" % os.path.dirname(os.path.realpath(__file__))))
 VERSION = MANIFEST["version"]
 DOMAIN = MANIFEST["domain"]
 DEFAULT_NAME = MANIFEST["name"]
