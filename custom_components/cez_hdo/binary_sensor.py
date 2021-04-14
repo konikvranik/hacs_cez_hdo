@@ -9,13 +9,14 @@ Modified to parse a JSON reply, set sensor state due to active T2 and HDO times
 import datetime
 import json
 
-from homeassistant.components.binary_sensor import PLATFORM_SCHEMA
+from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, DEVICE_CLASS_POWER
 from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, STATE_UNKNOWN, STATE_ON, STATE_OFF)
 from homeassistant.helpers.entity import Entity
 
 from . import DOMAIN, SERVICE, CONF_CODE, CONF_MAX_COUNT, CONF_REFRESH_RATE, TIMES, SCHEMA, _LOGGER, strfdelta, VERSION
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
+SCAN_INTERVAL = datetime.timedelta(hours=1)
 
 
 async def async_setup_entry(hass, config, async_add_entities):
@@ -46,6 +47,8 @@ class HDORestSensor(Entity):
         self._maxCount = maxCount
         self._refresh_rate = refresh_rate
         self._last_refresh = datetime.datetime.now() - 2 * self._refresh_rate
+        global SCAN_INTERVAL
+        SCAN_INTERVAL = self._refresh_rate
 
     @property
     def unique_id(self):
@@ -122,6 +125,10 @@ class HDORestSensor(Entity):
     def force_update(self):
         """Force update."""
         return self._force_update
+
+    @property
+    def device_class(self):
+        return DEVICE_CLASS_POWER
 
     def is_in_limit(self, time):
         for t in self.data[TIMES]:
