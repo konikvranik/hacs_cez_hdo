@@ -16,7 +16,6 @@ from homeassistant.helpers.entity import Entity
 from . import DOMAIN, SERVICE, CONF_CODE, CONF_MAX_COUNT, CONF_REFRESH_RATE, TIMES, SCHEMA, _LOGGER, strfdelta, VERSION
 
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(SCHEMA)
-SCAN_INTERVAL = datetime.timedelta(hours=1)
 
 
 async def async_setup_entry(hass, config, async_add_entities):
@@ -47,8 +46,6 @@ class HDORestSensor(Entity):
         self._maxCount = maxCount
         self._refresh_rate = refresh_rate
         self._last_refresh = datetime.datetime.now() - 2 * self._refresh_rate
-        global SCAN_INTERVAL
-        SCAN_INTERVAL = self._refresh_rate
 
     @property
     def unique_id(self):
