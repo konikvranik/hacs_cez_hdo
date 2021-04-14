@@ -23,10 +23,11 @@ _LOGGER = logging.getLogger(__name__)
 _LOGGER.info('Starting hdo')
 
 DEFAULT_METHOD = 'GET'
-DEFAULT_NAME = 'HDO REST Sensor'
 DEFAULT_VERIFY_SSL = True
-DOMAIN = 'cez_hdo'
-VERSION = "0.1.0"
+MANIFEST = json.load(open("mainfest.json"))
+VERSION = MANIFEST["version"]
+DOMAIN = MANIFEST["domain"]
+DEFAULT_NAME = MANIFEST["name"]
 PLATFORM = "binary_sensor"
 ISSUE_URL = "https://github.com/konikvranik/hacs_cez/issues"
 SERVICE = 'refresh'
