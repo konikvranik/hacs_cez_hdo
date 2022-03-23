@@ -180,19 +180,19 @@ class HDORestData(object):
             else:
                 _LOGGER.debug("Got data:\n%s", _data)
             _time_sets = []
-            for d in _data:
+            for d in _data['data']:
                 _time_sets.append(_parse_times(d))
             self.data = {
-                "valid_from": _data[0]["VALID_FROM"],
-                "valid_to": _data[0]["VALID_TO"],
-                "dump_id": _data[0]["DUMP_ID"],
-                "povel": _data[0]["POVEL"],
-                "kod_povelu": _data[0]["KOD_POVELU"],
-                "sazba": _data[0]["SAZBA"],
-                "info": _data[0]["INFO"],
-                "doba": _data[0]["DOBA"],
-                "date": _data[0]["DATE"],
-                "description": _data[0]["DESCRIPTION"],
+                "valid_from": _data['data'][0]["VALID_FROM"],
+                "valid_to": _data['data'][0]["VALID_TO"],
+                "dump_id": _data['data'][0]["DUMP_ID"],
+                "povel": _data['data'][0]["POVEL"],
+                "kod_povelu": _data['data'][0]["KOD_POVELU"],
+                "sazba": _data['data'][0]["SAZBA"],
+                "info": _data['data'][0]["INFO"],
+                "doba": _data['data'][0]["DOBA"],
+                "date": _data['data'][0]["DATE_OF_ENTRY"],
+                "description": _data['data'][0]["DESCRIPTION"],
                 "sazby": _time_sets
             }
 
@@ -224,8 +224,8 @@ def _tarif_index(t):
 def _parse_times(data):
     r = []
     for i in range(1, 10):
-        s = data.get('CAS_ZAP' + str(i))
-        e = data.get('CAS_VYP' + str(i))
+        s = data.get('CAS_ZAP_' + str(i))
+        e = data.get('CAS_VYP_' + str(i))
         if s and e:
             r.append({'start': s, 'end': e})
 
