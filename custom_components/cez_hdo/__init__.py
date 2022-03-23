@@ -68,7 +68,7 @@ async def async_setup_entry(hass, entry):
         else:
             code = config.get(CONF_CODE)
         if code not in restdata:
-            url = 'https://www.cez.cz/edee/content/sysutf/ds3/data/hdo_data.json?&code=%s&regionStred=1' % code
+            url = 'https://www.cezdistribuce.cz/distHdo/adam/containers/stred?code=%s' % code
             _LOGGER.debug("Registering %s", code)
             restdata[code] = HDORestData(hass, 'GET', url, DEFAULT_VERIFY_SSL)
         hass.async_add_executor_job(update, code)
