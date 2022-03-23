@@ -1,4 +1,4 @@
-cez_hdo:
+hdo:
   # Description of the service
   description: ČEZ HDO.
   # Different fields that your service accepts
