@@ -183,16 +183,16 @@ class HDORestData(object):
             for d in _data:
                 _time_sets.append(_parse_times(d))
             self.data = {
-                "validFrom": _data[0]["validFrom"],
-                "validTo": _data[0]["validTo"],
-                "dumpId": _data[0]["dumpId"],
-                "povel": _data[0]["povel"],
-                "kodPovelu": _data[0]["kodPovelu"],
-                "sazba": _data[0]["sazba"],
-                "info": _data[0]["info"],
-                "doba": _data[0]["doba"],
-                "date": _data[0]["date"],
-                "description": _data[0]["description"],
+                "valid_from": _data[0]["VALID_FROM"],
+                "valid_to": _data[0]["VALID_TO"],
+                "dump_id": _data[0]["DUMP_ID"],
+                "povel": _data[0]["POVEL"],
+                "kod_povelu": _data[0]["KOD_POVELU"],
+                "sazba": _data[0]["SAZBA"],
+                "info": _data[0]["INFO"],
+                "doba": _data[0]["DOBA"],
+                "date": _data[0]["DATE"],
+                "description": _data[0]["DESCRIPTION"],
                 "sazby": _time_sets
             }
 
@@ -224,14 +224,14 @@ def _tarif_index(t):
 def _parse_times(data):
     r = []
     for i in range(1, 10):
-        s = data.get('casZap' + str(i))
-        e = data.get('casVyp' + str(i))
+        s = data.get('CAS_ZAP' + str(i))
+        e = data.get('CAS_VYP' + str(i))
         if s and e:
             r.append({'start': s, 'end': e})
 
     return {
-        "id": data["id"],
-        "platnost": data["platnost"],
+        "id": data["ID"],
+        "platnost": data["PLATNOST"],
         "casy": r
     }
 
