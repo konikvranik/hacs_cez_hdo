@@ -1,6 +1,6 @@
-hdo:
+refresh:
   # Description of the service
-  description: ČEZ HDO.
+  description: ČEZ HDO refresh data.
   # Different fields that your service accepts
   fields:
     # Key of the field
