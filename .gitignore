@@ -3,7 +3,6 @@
 /automations.yaml
 /configuration.yaml
 /groups.yaml
-/home-assistant.log
 /home-assistant_v2.db
 /Pipfile
 /Pipfile.lock
@@ -16,3 +15,4 @@
 /.storage/
 /.cloud/
 /.idea/
+/home-assistant.log*
