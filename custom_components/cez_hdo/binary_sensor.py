@@ -119,6 +119,22 @@ class HDORestSensor(Entity):
         return self._attributes
 
     @property
+    def state_attributes(self):
+        """Return the attributes of the entity.
+           Provide the parsed JSON data (if any).
+        """
+
+        return self._attributes
+
+    @property
+    def attributes(self):
+        """Return the attributes of the entity.
+           Provide the parsed JSON data (if any).
+        """
+
+        return self._attributes
+
+    @property
     def force_update(self):
         """Force update."""
         return self._force_update
