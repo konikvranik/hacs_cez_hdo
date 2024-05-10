@@ -172,6 +172,7 @@ class HDORestData(object):
                 response = sess.send(self._request, timeout=10, verify=self._verify_ssl)
 
             response.encoding = 'UTF-8'
+            _LOGGER.debug(response.text)
             _data = json.loads(response.text)
             if not _data:
                 _LOGGER.warning("returned empty data: %s", self._request)
