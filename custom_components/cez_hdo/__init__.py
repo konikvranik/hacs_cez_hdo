@@ -1,20 +1,19 @@
 """CEZ HDO info"""
 
 import datetime
+import homeassistant.helpers.config_validation as cv
 import json
 import logging
 import os
-from string import Formatter
-
-import homeassistant.helpers.config_validation as cv
 import requests
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE,
                                  CONF_FORCE_UPDATE, CONF_CODE)
+from homeassistant.core import HomeAssistant
 from homeassistant.core import callback
-from homeassistant.helpers.typing import HomeAssistantType
+from string import Formatter
 from voluptuous import ALLOW_EXTRA
 
 CONF_MAX_COUNT = 'maxCount'
@@ -81,7 +80,7 @@ async def async_setup_entry(hass, entry):
 
 
 async def platform_async_setup_entry(
-        hass: HomeAssistantType,
+        hass: HomeAssistant,
         config_entry: ConfigEntry,
         async_add_entities,
         *,
