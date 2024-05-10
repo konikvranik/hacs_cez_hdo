@@ -11,7 +11,6 @@ import json
 
 from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, STATE_UNKNOWN, STATE_ON, STATE_OFF)
-from homeassistant.helpers.entity import Entity
 
 from . import DOMAIN, SERVICE, CONF_CODE, CONF_MAX_COUNT, CONF_REFRESH_RATE, TIMES, SCHEMA, _LOGGER, strfdelta, VERSION
 
@@ -41,10 +40,11 @@ class HDORestSensor(BinarySensorEntity):
         self._data = None
         self._state = STATE_UNKNOWN
         self._value_template = value_template
-        self._force_update = force_update
+        self._attr_force_update = force_update
         self._maxCount = maxCount
         self._refresh_rate = refresh_rate
         self._last_refresh = datetime.datetime.now() - 2 * self._refresh_rate
+        self._attr_device_class = BinarySensorDeviceClass.POWER
 
     @property
     def unique_id(self):
@@ -109,15 +109,6 @@ class HDORestSensor(BinarySensorEntity):
             _LOGGER.debug("Error decoding JSON. Resetting attributes")
             self._attr_extra_state_attributes = {}
 
-    @property
-    def force_update(self):
-        """Force update."""
-        return self._force_update
-
-    @property
-    def device_class(self):
-        return BinarySensorDeviceClass.POWER
-
     def is_in_limit(self, time):
         for t in self.data[TIMES]:
             if t[0] < time < t[1]:
@@ -139,7 +130,7 @@ class HDORestSensor(BinarySensorEntity):
             if t[0] > time or t[1] > time:
                 r.append(dict(start=t[0], end=t[1], duration=':'.join(
                     str(t[1] - t[0])
-                        .split(':')[:2])))
+                    .split(':')[:2])))
                 count += 1
             if count >= maxCount:
                 break
