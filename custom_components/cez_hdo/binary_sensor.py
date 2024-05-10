@@ -45,6 +45,7 @@ class HDORestSensor(BinarySensorEntity):
         self._refresh_rate = refresh_rate
         self._last_refresh = datetime.datetime.now() - 2 * self._refresh_rate
         self._attr_device_class = BinarySensorDeviceClass.POWER
+        self._attr_extra_state_attributes = dict()
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, self._attr_unique_id)},
             # If desired, the name for the device could be different to the entity
