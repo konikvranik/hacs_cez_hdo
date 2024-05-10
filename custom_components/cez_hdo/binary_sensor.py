@@ -10,7 +10,8 @@ import datetime
 import json
 
 from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorDeviceClass, BinarySensorEntity
-from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, STATE_UNKNOWN, STATE_ON, STATE_OFF)
+from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE)
+from homeassistant.helpers.entity import DeviceInfo
 
 from . import DOMAIN, SERVICE, CONF_CODE, CONF_MAX_COUNT, CONF_REFRESH_RATE, TIMES, SCHEMA, _LOGGER, strfdelta, VERSION
 
@@ -35,43 +36,23 @@ class HDORestSensor(BinarySensorEntity):
     def __init__(self, hass, name, code, value_template, refresh_rate, force_update, maxCount=10):
         """Initialize the REST sensor."""
         self._hass = hass
-        self._name = name
-        self._code = code
+        self._attr_name = name
+        self._attr_unique_id = code
         self._data = None
-        self._state = STATE_UNKNOWN
         self._value_template = value_template
         self._attr_force_update = force_update
         self._maxCount = maxCount
         self._refresh_rate = refresh_rate
         self._last_refresh = datetime.datetime.now() - 2 * self._refresh_rate
         self._attr_device_class = BinarySensorDeviceClass.POWER
-
-    @property
-    def unique_id(self):
-        """Return Unique ID string."""
-        return self._code
-
-    @property
-    def device_info(self):
-        """Information about this entity/device."""
-        return {
-            "identifiers": {(DOMAIN, self._code)},
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, self._attr_unique_id)},
             # If desired, the name for the device could be different to the entity
-            "name": self.name,
-            "sw_version": VERSION,
-            "model": "REST call",
-            "manufacturer": "ČEZ distribuce",
-        }
-
-    @property
-    def name(self):
-        """Return the name of the sensor."""
-        return self._name
-
-    @property
-    def state(self):
-        """Return the state of the device."""
-        return self._state
+            name=self.name,
+            sw_version=VERSION,
+            model="REST call",
+            manufacturer="ČEZ distribuce",
+        )
 
     @property
     def data(self):
@@ -80,15 +61,15 @@ class HDORestSensor(BinarySensorEntity):
 
     def update(self):
         """Get the latest data from REST API and update the state."""
-        _LOGGER.info("Calling update %s", self._code)
+        _LOGGER.info("Calling update %s", self._attr_unique_id)
         if self._last_refresh + self._refresh_rate < datetime.datetime.now():
-            self._hass.services.call(DOMAIN, SERVICE, {CONF_CODE: self._code})
+            self._hass.services.call(DOMAIN, SERVICE, {CONF_CODE: self._attr_unique_id})
             self._last_refresh = datetime.datetime.now()
-        if not self._hass.states.get(DOMAIN + '.' + self._code):
+        if not self._hass.states.get(DOMAIN + '.' + self._attr_unique_id):
             _LOGGER.warn('Unable to update data')
             return
         else:
-            self._data = self._hass.states.get(DOMAIN + '.' + self._code).attributes
+            self._data = self._hass.states.get(DOMAIN + '.' + self._attr_unique_id).attributes
             _LOGGER.debug('Updated sensor state: %s', self._data)
 
         """Parse the return text as JSON and save the json as an attribute."""
@@ -96,14 +77,14 @@ class HDORestSensor(BinarySensorEntity):
             _LOGGER.debug("Parsing attributes...")
 
             now = datetime.datetime.now()
-            self._state = STATE_ON if self.is_in_limit(now) else STATE_OFF
+            self._attr_is_on = self.is_in_limit(now)
             self._attr_extra_state_attributes['next'] = self.find_next(
                 now).strftime('%H:%M')
             self._attr_extra_state_attributes['to_next'] = strfdelta(
                 self.find_next(now) - now, '{H}:{M:02}')
             self._attr_extra_state_attributes['following'] = self.following(
                 now, self._maxCount)
-            self._attr_extra_state_attributes[CONF_CODE] = self._code
+            self._attr_extra_state_attributes[CONF_CODE] = self._attr_unique_id
 
         except json.JSONDecodeError:
             _LOGGER.debug("Error decoding JSON. Resetting attributes")
