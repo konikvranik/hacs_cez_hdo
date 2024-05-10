@@ -9,7 +9,7 @@ Modified to parse a JSON reply, set sensor state due to active T2 and HDO times
 import datetime
 import json
 
-from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, DEVICE_CLASS_POWER
+from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorDeviceClass
 from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, STATE_UNKNOWN, STATE_ON, STATE_OFF)
 from homeassistant.helpers.entity import Entity
 
@@ -125,7 +125,7 @@ class HDORestSensor(Entity):
 
     @property
     def device_class(self):
-        return DEVICE_CLASS_POWER
+        return BinarySensorDeviceClass.POWER
 
     def is_in_limit(self, time):
         for t in self.data[TIMES]:
