@@ -9,7 +9,7 @@ Modified to parse a JSON reply, set sensor state due to active T2 and HDO times
 import datetime
 import json
 
-from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorDeviceClass
+from homeassistant.components.binary_sensor import PLATFORM_SCHEMA, BinarySensorDeviceClass, BinarySensorEntity
 from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE, CONF_FORCE_UPDATE, STATE_UNKNOWN, STATE_ON, STATE_OFF)
 from homeassistant.helpers.entity import Entity
 
@@ -30,7 +30,7 @@ async def async_setup_entry(hass, config, async_add_entities):
     async_add_entities([sensor], True)
 
 
-class HDORestSensor(Entity):
+class HDORestSensor(BinarySensorEntity):
     """Implementation of a REST sensor."""
 
     def __init__(self, hass, name, code, value_template, refresh_rate, force_update, maxCount=10):
@@ -39,7 +39,6 @@ class HDORestSensor(Entity):
         self._name = name
         self._code = code
         self._data = None
-        self._attributes = {}
         self._state = STATE_UNKNOWN
         self._value_template = value_template
         self._force_update = force_update
@@ -98,41 +97,17 @@ class HDORestSensor(Entity):
 
             now = datetime.datetime.now()
             self._state = STATE_ON if self.is_in_limit(now) else STATE_OFF
-            self._attributes['next'] = self.find_next(
+            self._attr_extra_state_attributes['next'] = self.find_next(
                 now).strftime('%H:%M')
-            self._attributes['to_next'] = strfdelta(
+            self._attr_extra_state_attributes['to_next'] = strfdelta(
                 self.find_next(now) - now, '{H}:{M:02}')
-            self._attributes['following'] = self.following(
+            self._attr_extra_state_attributes['following'] = self.following(
                 now, self._maxCount)
-            self._attributes[CONF_CODE] = self._code
+            self._attr_extra_state_attributes[CONF_CODE] = self._code
 
         except json.JSONDecodeError:
             _LOGGER.debug("Error decoding JSON. Resetting attributes")
-            self._attributes = {}
-
-    @property
-    def extra_state_attributes(self):
-        """Return the attributes of the entity.
-           Provide the parsed JSON data (if any).
-        """
-
-        return self._attributes
-
-    @property
-    def state_attributes(self):
-        """Return the attributes of the entity.
-           Provide the parsed JSON data (if any).
-        """
-
-        return self._attributes
-
-    @property
-    def attributes(self):
-        """Return the attributes of the entity.
-           Provide the parsed JSON data (if any).
-        """
-
-        return self._attributes
+            self._attr_extra_state_attributes = {}
 
     @property
     def force_update(self):
