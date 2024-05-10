@@ -67,9 +67,9 @@ async def async_setup_entry(hass, entry):
         else:
             code = config.get(CONF_CODE)
         if code not in restdata:
-            url = 'https://www.cezdistribuce.cz/distHdo/adam/containers/stred?code=%s' % code
+            url = 'https://www.cezdistribuce.cz/api/graphql'
             _LOGGER.debug("Registering %s", code)
-            restdata[code] = HDORestData(hass, 'GET', url, DEFAULT_VERIFY_SSL)
+            restdata[code] = HDORestData(hass, 'POST', url, DEFAULT_VERIFY_SSL)
         hass.async_add_executor_job(update, code)
 
     # Register our service with Home Assistant.
@@ -158,8 +158,197 @@ class HDORestData(object):
                 }
             ]
         }
+
+
+
+        [
+    {
+        "data": {
+            "hdoData": {
+                "result": [
+                    {
+                        "description": "Sazba D57d ",
+                        "kod": null,
+                        "kod_povelu": "405",
+                        "povel": "A3B4DP1",
+                        "timelines": [
+                            {
+                                "description": "Pondělí - Pátek (20 hodin denně)",
+                                "intervals": [
+                                    {
+                                        "left": 0,
+                                        "width": 23.2128,
+                                        "text": "0:00 - 5:35",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 27.04,
+                                        "width": 10.0672,
+                                        "text": "6:30 - 8:55",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 41.2672,
+                                        "width": 23.545599999999993,
+                                        "text": "9:55 - 15:35",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 68.97279999999999,
+                                        "width": 15.267200000000017,
+                                        "text": "16:35 - 20:15",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 88.4,
+                                        "width": 11.439999999999998,
+                                        "text": "21:15 - 24:00",
+                                        "__typename": "HdoInterval"
+                                    }
+                                ],
+                                "__typename": "HdoTimeline"
+                            },
+                            {
+                                "description": "Sobota - Neděle (20 hodin denně)",
+                                "intervals": [
+                                    {
+                                        "left": 0,
+                                        "width": 38.1472,
+                                        "text": "0:00 - 9:10",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 42.3072,
+                                        "width": 9.692799999999998,
+                                        "text": "10:10 - 12:30",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 56.160000000000004,
+                                        "width": 22.54720000000001,
+                                        "text": "13:30 - 18:55",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 82.86720000000001,
+                                        "width": 8.319999999999993,
+                                        "text": "19:55 - 21:55",
+                                        "__typename": "HdoInterval"
+                                    },
+                                    {
+                                        "left": 95.34720000000002,
+                                        "width": 4.492799999999988,
+                                        "text": "22:55 - 24:00",
+                                        "__typename": "HdoInterval"
+                                    }
+                                ],
+                                "__typename": "HdoTimeline"
+                            }
+                        ],
+                        "__typename": "HdoResult"
+                    }
+                ],
+                "resultPrint": [
+                    {
+                        "description": "Sazba D57d ",
+                        "kod": null,
+                        "kod_povelu": "405",
+                        "povel": "A3B4DP1",
+                        "rows": [
+                            {
+                                "day": "Pondělí",
+                                "intervals": [
+                                    "0:00 - 5:35",
+                                    "6:30 - 8:55",
+                                    "9:55 - 15:35",
+                                    "16:35 - 20:15",
+                                    "21:15 - 24:00"
+                                ],
+                                "__typename": "HdoRow"
+                            },
+                            {
+                                "day": "Úterý",
+                                "intervals": [
+                                    "0:00 - 5:35",
+                                    "6:30 - 8:55",
+                                    "9:55 - 15:35",
+                                    "16:35 - 20:15",
+                                    "21:15 - 24:00"
+                                ],
+                                "__typename": "HdoRow"
+                            },
+                            {
+                                "day": "Středa",
+                                "intervals": [
+                                    "0:00 - 5:35",
+                                    "6:30 - 8:55",
+                                    "9:55 - 15:35",
+                                    "16:35 - 20:15",
+                                    "21:15 - 24:00"
+                                ],
+                                "__typename": "HdoRow"
+                            },
+                            {
+                                "day": "Čtvrtek",
+                                "intervals": [
+                                    "0:00 - 5:35",
+                                    "6:30 - 8:55",
+                                    "9:55 - 15:35",
+                                    "16:35 - 20:15",
+                                    "21:15 - 24:00"
+                                ],
+                                "__typename": "HdoRow"
+                            },
+                            {
+                                "day": "Pátek",
+                                "intervals": [
+                                    "0:00 - 5:35",
+                                    "6:30 - 8:55",
+                                    "9:55 - 15:35",
+                                    "16:35 - 20:15",
+                                    "21:15 - 24:00"
+                                ],
+                                "__typename": "HdoRow"
+                            },
+                            {
+                                "day": "Sobota",
+                                "intervals": [
+                                    "0:00 - 9:10",
+                                    "10:10 - 12:30",
+                                    "13:30 - 18:55",
+                                    "19:55 - 21:55",
+                                    "22:55 - 24:00"
+                                ],
+                                "__typename": "HdoRow"
+                            },
+                            {
+                                "day": "Neděle a svátky",
+                                "intervals": [
+                                    "0:00 - 9:10",
+                                    "10:10 - 12:30",
+                                    "13:30 - 18:55",
+                                    "19:55 - 21:55",
+                                    "22:55 - 24:00"
+                                ],
+                                "__typename": "HdoRow"
+                            }
+                        ],
+                        "__typename": "HdoResultPrint"
+                    }
+                ],
+                "queryDescription": "povel",
+                "__typename": "HdoResponse"
+            }
+        }
+    }
+]
         """
-        self._request = requests.Request(method, resource).prepare()
+        self._request = requests.Request(method, resource, data=[{"operationName": "hdoData",
+                                                                  "variables": {
+                                                                      "code": "A3B4DP1",
+                                                                      "area": "stred"
+                                                                  },
+                                                                  "query": "query hdoData($code: String, $area: String) {\n  hdoData(code: $code, area: $area) {\n    result {\n      description\n      kod\n      kod_povelu\n      povel\n      timelines {\n        description\n        intervals {\n          left\n          width\n          text\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    resultPrint {\n      description\n      kod\n      kod_povelu\n      povel\n      rows {\n        day\n        intervals\n        __typename\n      }\n      __typename\n    }\n    queryDescription\n    __typename\n  }\n}\n"}]).prepare()
         self._verify_ssl = verify_ssl
         self._hass = hass
         self.data = None
@@ -180,7 +369,7 @@ class HDORestData(object):
             else:
                 _LOGGER.debug("Got data:\n%s", _data)
             _time_sets = []
-            for d in _data['data']:
+            for d in _data[0]['data']['hdoData']['resultPrint'][0]['rows']:
                 _time_sets.append(_parse_times(d))
             self.data = {
                 "valid_from": _data['data'][0]["VALID_FROM"],
@@ -222,16 +411,31 @@ def _tarif_index(t):
 
 
 def _parse_times(data):
+    """
+							{
+								"day": "Pondělí",
+								"intervals": [
+									"0:00 - 5:35",
+									"6:30 - 8:55",
+									"9:55 - 15:35",
+									"16:35 - 20:15",
+									"21:15 - 24:00"
+								],
+								"__typename": "HdoRow"
+							}
+
+    :param data:
+    :return:
+    """
     r = []
-    for i in range(1, 10):
-        s = data.get('CAS_ZAP_' + str(i))
-        e = data.get('CAS_VYP_' + str(i))
-        if s and e:
-            r.append({'start': s, 'end': e})
+    for i in data['intervals']:
+        s = i.split(" - ")
+        if len(s) > 1 :
+            r.append({'start': s[0], 'end': s[1]})
 
     return {
-        "id": data["ID"],
-        "platnost": data["PLATNOST"],
+        "id": data["day"],
+        "platnost": data["day"],
         "casy": r
     }
 
