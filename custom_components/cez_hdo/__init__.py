@@ -374,16 +374,9 @@ class HDORestData(object):
             for d in _data[0]['data']['hdoData']['resultPrint'][0]['rows']:
                 _time_sets.append(_parse_times(d))
             self.data = {
-                "valid_from": _data['data'][0]["VALID_FROM"],
-                "valid_to": _data['data'][0]["VALID_TO"],
-                "dump_id": _data['data'][0]["DUMP_ID"],
-                "povel": _data['data'][0]["POVEL"],
-                "kod_povelu": _data['data'][0]["KOD_POVELU"],
-                "sazba": _data['data'][0]["SAZBA"],
-                "info": _data['data'][0]["INFO"],
-                "doba": _data['data'][0]["DOBA"],
-                "date": _data['data'][0]["DATE_OF_ENTRY"],
-                "description": _data['data'][0]["DESCRIPTION"],
+                "povel": _data[0]['data']['hdoData']['resultPrint'][0]['povel'],
+                "kod_povelu": _data[0]['data']['hdoData']['resultPrint'][0]['kod_povelu'],
+                "description": _data[0]['data']['hdoData']['resultPrint'][0]['description'],
                 "sazby": _time_sets
             }
 
