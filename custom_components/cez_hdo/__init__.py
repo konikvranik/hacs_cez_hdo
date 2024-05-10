@@ -403,7 +403,7 @@ class HDORestData(object):
 
 def _parse_time(_time) -> datetime.time:
     s = _time.split(":")
-    return datetime.time(s[0] if s[0] < 24 else 0, s[1])
+    return datetime.time(int(s[0] if s[0] != "24" else 0), int(s[1]))
 
 
 def _tarif_index(t):
