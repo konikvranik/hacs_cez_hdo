@@ -1,10 +1,12 @@
 """CEZ HDO info"""
 
 import datetime
-import homeassistant.helpers.config_validation as cv
 import json
 import logging
 import os
+from string import Formatter
+
+import homeassistant.helpers.config_validation as cv
 import requests
 import voluptuous as vol
 from homeassistant import config_entries
@@ -13,7 +15,6 @@ from homeassistant.const import (CONF_NAME, CONF_VALUE_TEMPLATE,
                                  CONF_FORCE_UPDATE, CONF_CODE)
 from homeassistant.core import HomeAssistant
 from homeassistant.core import callback
-from string import Formatter
 from voluptuous import ALLOW_EXTRA
 
 CONF_MAX_COUNT = 'maxCount'
@@ -345,8 +346,11 @@ class HDORestData(object):
         """
         self._request = requests.Request(method, resource,
                                          {"content-type": "application/json", "accept": "application/json",
-                                          "x-locale": "cs"},
-                                         data='[{"operationName": "hdoData", "variables": {"code": "A3B4DP1", "area": "stred"}, "query": "query hdoData($code: String, $area: String) {\n  hdoData(code: $code, area: $area) {\n    result {\n      description\n      kod\n      kod_povelu\n      povel\n      timelines {\n        description\n        intervals {\n          left\n          width\n          text\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    resultPrint {\n      description\n      kod\n      kod_povelu\n      povel\n      rows {\n        day\n        intervals\n        __typename\n      }\n      __typename\n    }\n    queryDescription\n    __typename\n  }\n}\n"}]').prepare()
+                                          "x-locale": "cs"}, None,
+                                         '[{"operationName": "hdoData",'
+                                         ' "variables": {"code": "A3B4DP1", "area": "stred"},'
+                                         ' "query": "query hdoData($code: String, $area: String) { hdoData(code: $code, area: $area) { resultPrint { description kod kod_povelu povel rows { day intervals __typename } __typename } queryDescription __typename } } "}]').prepare()
+
         self._verify_ssl = verify_ssl
         self._hass = hass
         self.data = None
