@@ -78,13 +78,13 @@ class HDORestSensor(BinarySensorEntity):
 
             now = datetime.datetime.now()
             self._attr_is_on = self.is_in_limit(now)
-            self._attr_extra_state_attributes['next'] = self.find_next(
+            self.extra_state_attributes['next'] = self.find_next(
                 now).strftime('%H:%M')
-            self._attr_extra_state_attributes['to_next'] = strfdelta(
+            self.extra_state_attributes['to_next'] = strfdelta(
                 self.find_next(now) - now, '{H}:{M:02}')
-            self._attr_extra_state_attributes['following'] = self.following(
+            self.extra_state_attributes['following'] = self.following(
                 now, self._maxCount)
-            self._attr_extra_state_attributes[CONF_CODE] = self._attr_unique_id
+            self.extra_state_attributes[CONF_CODE] = self._attr_unique_id
 
         except json.JSONDecodeError:
             _LOGGER.debug("Error decoding JSON. Resetting attributes")
