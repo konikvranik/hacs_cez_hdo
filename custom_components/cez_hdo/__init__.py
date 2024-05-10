@@ -401,7 +401,7 @@ class HDORestData(object):
         return r
 
 
-def _parse_time(self, _time) -> datetime.time:
+def _parse_time(_time) -> datetime.time:
     s = _time.split(":")
     return datetime.time(s[0] if s[0] < 24 else 0, s[1])
 
