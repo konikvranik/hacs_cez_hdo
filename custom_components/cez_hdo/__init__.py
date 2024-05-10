@@ -396,9 +396,14 @@ class HDORestData(object):
         r = []
         _LOGGER.debug('DATA: %s' % self.data)
         for t in self.data['sazby'][_tarif_index(date)]['casy']:
-            r.append((datetime.datetime.combine(date, datetime.datetime.strptime(t['start'], '%H:%M').time()),
-                      datetime.datetime.combine(date, datetime.datetime.strptime(t['end'], '%H:%M').time())))
+            r.append((datetime.datetime.combine(date, _parse_time(t['start'])),
+                      datetime.datetime.combine(date, _parse_time(t['end']))))
         return r
+
+
+def _parse_time(self, _time) -> datetime.time:
+    s = _time.split(":")
+    return datetime.time(s[0] if s[0] < 24 else 0, s[1])
 
 
 def _tarif_index(t):
