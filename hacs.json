@@ -4,6 +4,6 @@
   "country": "CZ",
   "render_readme": true,
   "iot_class": "Cloud Polling",
-  "icon": "https://upload.wikimedia.org/wikipedia/commons/7/76/%C4%8Cez_logo.PNG",
-  "logo": "https://mu.kutnahora.cz/uploads/download/cezdistribuce_logonew.jpg"
+  "icon": "https://brands.home-assistant.io/cez_hdo/icon.png",
+  "logo": "https://brands.home-assistant.io/cez_hdo/logo.png"
 }
