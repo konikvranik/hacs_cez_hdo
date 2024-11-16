@@ -2,6 +2,5 @@
 	"name": "ČEZ HDO",
 	"homeassistant": "2024.11.0",
 	"country": "CZ",
-	"render_readme": true,
-	"iot_class": "Cloud Polling"
+	"render_readme": true
 }
