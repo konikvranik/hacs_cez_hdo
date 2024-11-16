@@ -1,9 +1,7 @@
 {
-  "name": "ČEZ HDO",
-  "homeassistant": "2024.11.0",
-  "country": "CZ",
-  "render_readme": true,
-  "iot_class": "Cloud Polling",
-  "icon": "https://brands.home-assistant.io/cez_hdo/icon.png",
-  "logo": "https://brands.home-assistant.io/cez_hdo/logo.png"
+	"name": "ČEZ HDO",
+	"homeassistant": "2024.11.0",
+	"country": "CZ",
+	"render_readme": true,
+	"iot_class": "Cloud Polling"
 }
